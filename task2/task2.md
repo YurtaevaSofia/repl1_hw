@@ -80,11 +80,12 @@ SHOW SLAVE STATUS\G
 
 ### Статус мастера (`SHOW MASTER STATUS`)
 
-![Master Status](screenshots/master_status.png)
+<img width="655" height="129" alt="Screenshot 2026-05-25 at 22 03 01" src="https://github.com/user-attachments/assets/b77aa425-7107-4a87-866b-5c5d5e714b27" />
+
 
 ### Статус слейва (`SHOW SLAVE STATUS`)
 
-![Slave Status](screenshots/slave_status.png)
+<img width="655" height="887" alt="Screenshot 2026-05-25 at 22 04 09" src="https://github.com/user-attachments/assets/4b463bdb-350c-4eaf-80eb-c6e06e99080d" />
 
 ### Данные на мастере
 
