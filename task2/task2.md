@@ -1,0 +1,103 @@
+# Задание 2. Конфигурация Master-Slave репликации
+
+## Стек
+
+- MySQL 8.0 (два контейнера Docker)
+- Master: порт 3316
+- Slave: порт 3317
+
+## Структура файлов
+
+```
+task2/
+├── docker-compose.yml
+├── master/
+│   └── my.cnf
+└── slave/
+    └── my.cnf
+```
+
+## Конфигурация мастера (`master/my.cnf`)
+
+```ini
+[mysqld]
+server-id     = 1        # уникальный ID узла
+log_bin       = mysql-bin  # включаем бинарный лог
+binlog_format = ROW      # формат — построчный
+binlog_do_db  = repl_db  # реплицируем только эту БД
+```
+
+## Конфигурация слейва (`slave/my.cnf`)
+
+```ini
+[mysqld]
+server-id  = 2           # отличается от мастера
+relay_log  = relay-bin   # лог для хранения событий от мастера
+read_only  = 1           # слейв только для чтения
+```
+
+## Шаги настройки
+
+### 1. Запуск контейнеров
+
+```bash
+docker compose up -d
+```
+
+### 2. Создание пользователя репликации на мастере
+
+```sql
+CREATE USER 'repl_user'@'%' IDENTIFIED WITH mysql_native_password BY 'replpass';
+GRANT REPLICATION SLAVE ON *.* TO 'repl_user'@'%';
+FLUSH PRIVILEGES;
+SHOW MASTER STATUS\G
+```
+
+### 3. Подключение слейва к мастеру
+
+```sql
+CHANGE MASTER TO
+  MASTER_HOST='<IP мастера>',
+  MASTER_USER='repl_user',
+  MASTER_PASSWORD='replpass',
+  MASTER_LOG_FILE='mysql-bin.000003',
+  MASTER_LOG_POS=851;
+START SLAVE;
+```
+
+### 4. Проверка статуса слейва
+
+```sql
+SHOW SLAVE STATUS\G
+```
+
+Ключевые поля:
+- `Slave_IO_Running: Yes` — слейв читает бинлог мастера
+- `Slave_SQL_Running: Yes` — слейв применяет события
+- `Seconds_Behind_Master: 0` — нет отставания
+
+## Скриншоты
+
+### Статус мастера (`SHOW MASTER STATUS`)
+
+![Master Status](screenshots/master_status.png)
+
+### Статус слейва (`SHOW SLAVE STATUS`)
+
+![Slave Status](screenshots/slave_status.png)
+
+### Данные на мастере
+
+![Master Data](screenshots/master_data.png)
+
+### Данные на слейве (после репликации)
+
+![Slave Data](screenshots/slave_data.png)
+
+## Результат
+
+Репликация настроена и работает:
+- `Slave_IO_Running: Yes`
+- `Slave_SQL_Running: Yes`
+- `Seconds_Behind_Master: 0`
+- Данные, записанные на мастере, появляются на слейве без задержки.
