@@ -89,11 +89,11 @@ SHOW SLAVE STATUS\G
 
 ### Данные на мастере
 
-![Master Data](screenshots/master_data.png)
+<img width="780" height="111" alt="Screenshot 2026-05-25 at 22 04 52" src="https://github.com/user-attachments/assets/02de72e2-4708-42fa-8841-42990fe0c3b6" />
 
 ### Данные на слейве (после репликации)
 
-![Slave Data](screenshots/slave_data.png)
+<img width="765" height="89" alt="Screenshot 2026-05-25 at 22 05 07" src="https://github.com/user-attachments/assets/d777b74f-d400-43a8-b763-99595b88e437" />
 
 ## Результат
 
